@@ -1,8 +1,8 @@
 import React from "react";
-import { render } from "react-dom";
+import ReactDom from "react-dom";
 
-function hi() {
-  return <p>Hi.</p>;
+function Hi() {
+  return <div>Hi.</div>;
 }
 
-render(hi(), document.getElementById("app"));
+ReactDom.render(<Hi></Hi>, document.getElementById("app"));
