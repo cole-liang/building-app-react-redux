@@ -1,13 +1,13 @@
 import * as types from "./actionTypes";
 import * as authorAPI from "../../api/authorApi";
 
-function loadAuthorsSuccess(author) {
-  return { type: types.LOAD_AUTHORS_SUCCESS, author };
+function loadAuthorsSuccess(authors) {
+  return { type: types.LOAD_AUTHORS_SUCCESS, authors };
 }
 
 export function loadAuthors() {
   return dispatch => {
-    authorAPI
+    return authorAPI
       .getAuthors()
       .then(author => {
         dispatch(loadAuthorsSuccess(author));
