@@ -5,6 +5,9 @@ import * as authorActions from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
+import { Link } from "react-router-dom";
+import Spinner from "./../common/Spinner";
+import { toast } from "react-toastify";
 
 class CoursesPage extends Component {
   componentDidMount() {
@@ -23,14 +26,37 @@ class CoursesPage extends Component {
     }
   }
 
+  handleDelete = course => {
+    toast.success("Course deleted.");
+
+    const { actions } = this.props;
+    actions.deleteCourse(course).catch(err => {
+      toast.error("Delete failed. " + err.message, { autoClose: false });
+    });
+  };
+
   render() {
-    const { courses } = this.props;
+    const { courses, loading } = this.props;
 
     return (
-      <div>
-        <h1>Courses</h1>
-        <CourseList courses={courses}></CourseList>
-      </div>
+      <>
+        {loading ? (
+          <Spinner></Spinner>
+        ) : (
+          <>
+            <h1>Courses</h1>
+            <Link to="/course">
+              <button style={{ marginBottom: 20 }} className="btn btn-primary">
+                Add Course
+              </button>
+            </Link>
+            <CourseList
+              courses={courses}
+              onDelete={this.handleDelete}
+            ></CourseList>
+          </>
+        )}
+      </>
     );
   }
 }
@@ -38,11 +64,13 @@ class CoursesPage extends Component {
 CoursesPage.propTypes = {
   authors: PropTypes.array.isRequired,
   courses: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => {
   return {
+    loading: state.apiCallsInProgress > 0,
     authors: state.authors,
     courses:
       state.authors.length !== 0
@@ -60,7 +88,8 @@ const mapDispatchToProps = dispatch => {
   return {
     actions: {
       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
-      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch)
+      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
+      deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch)
     }
   };
 };
